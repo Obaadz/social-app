@@ -1,22 +1,35 @@
 import express from "express";
 import mongoose from "mongoose";
 import { config } from "dotenv";
+import { z } from "zod";
 
 if (process.env.NODE_ENV !== "production") config({ path: ".env.local" });
 else config();
 
-if (!process.env.SECRET) throw new Error("missing 'SECRET' environment variable for jwt");
+const envSchema = z.object({
+  NODE_ENV: z.enum(["production", "development"]).optional(),
+  PORT: z
+    .string()
+    .regex(/^\d+$/, "Port number must be only integer")
+    .refine((value) => +value >= 1024, {
+      message: "Port number must be greater than or equal to 1024",
+    }),
+  DB_URI: z.string({ required_error: "DB_URI environment variable must not be empty" }),
+  SECRET: z.string({ required_error: "SECRET environment variable must not be empty" }),
+});
 
-console.log(`current node environment is ${process.env.NODE_ENV}`);
+envSchema.parse(process.env);
+
+console.log(`Current node environment is ${process.env.NODE_ENV}`);
 
 try {
   await mongoose.connect(process.env.DB_URI, {
     dbName: "socialapp",
   });
 
-  console.log("connected successfully to the database");
+  console.log("Connected successfully to the database");
 } catch (err) {
-  console.error("ERROR:", err.message);
+  console.error("Error:", err.message);
 
   throw new Error("Connect to the database failed");
 }
@@ -24,5 +37,5 @@ try {
 const app = express();
 
 app.listen(process.env.PORT, () => {
-  console.log(`listening on port ${process.env.PORT}`);
+  console.log(`Listening on port ${process.env.PORT}`);
 });

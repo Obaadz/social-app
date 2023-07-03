@@ -17,6 +17,16 @@ const envSchema = z.object({
     }),
   DB_URI: z.string({ required_error: "DB_URI environment variable must not be empty" }),
   SECRET: z.string({ required_error: "SECRET environment variable must not be empty" }),
+  INACTIVE_USERS_EXPIRES_SECONDS: z
+    .string({
+      required_error:
+        "INACTIVE_USERS_EXPIRES_SECONDS environment variable must not be empty",
+    })
+    .regex(/^\d+$/, "INACTIVE_USERS_EXPIRES_SECONDS must be only integer number")
+    .refine((value) => +value >= 900, {
+      message:
+        "INACTIVE_USERS_EXPIRES_SECONDS number must be greater than or equal to 900 seconds (15 min)",
+    }),
 });
 
 envSchema.parse(process.env);

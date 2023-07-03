@@ -5,6 +5,7 @@ declare global {
       PORT: string;
       DB_URI: string;
       SECRET: string;
+      INACTIVE_USERS_EXPIRES_SECONDS: string;
     }
   }
 }

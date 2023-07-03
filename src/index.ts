@@ -1,7 +1,8 @@
-import express from "express";
-import mongoose from "mongoose";
 import { config } from "dotenv";
+import express from "express";
 import { z } from "zod";
+import morgan from "morgan";
+import connectMongo from "./utils/connectMongo.js";
 
 if (process.env.NODE_ENV !== "production") config({ path: ".env.local" });
 else config();
@@ -22,20 +23,14 @@ envSchema.parse(process.env);
 
 console.log(`Current node environment is ${process.env.NODE_ENV}`);
 
-try {
-  await mongoose.connect(process.env.DB_URI, {
-    dbName: "socialapp",
-  });
-
-  console.log("Connected successfully to the database");
-} catch (err) {
-  console.error("Error:", err.message);
-
-  throw new Error("Connect to the database failed");
-}
+await connectMongo();
 
 const app = express();
 
-app.listen(process.env.PORT, () => {
+app.use(express.json());
+
+if (process.env.NODE_ENV === "development") app.use(morgan("dev"));
+
+app.listen(process.env.PORT, async () => {
   console.log(`Listening on port ${process.env.PORT}`);
 });

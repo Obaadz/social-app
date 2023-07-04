@@ -4,6 +4,7 @@ import { z } from "zod";
 import morgan from "morgan";
 import connectMongo from "./utils/connectMongo.js";
 import v1Routes from "./routes/v1/index.js";
+import cors from "cors";
 
 if (process.env.NODE_ENV !== "production") config({ path: ".env.local" });
 else config();
@@ -24,9 +25,9 @@ const envSchema = z.object({
         "INACTIVE_USERS_EXPIRES_SECONDS environment variable must not be empty",
     })
     .regex(/^\d+$/, "INACTIVE_USERS_EXPIRES_SECONDS must be only integer number")
-    .refine((value) => +value >= 900, {
+    .refine((value) => +value >= 90, {
       message:
-        "INACTIVE_USERS_EXPIRES_SECONDS number must be greater than or equal to 900 seconds (15 min)",
+        "INACTIVE_USERS_EXPIRES_SECONDS number must be greater than or equal to 90 seconds (15 min)",
     }),
   JWT_EXPIRE_TIME: z.string({
     required_error: "JWT_EXPIRE_TIME environment variable must not be empty",
@@ -49,6 +50,13 @@ const app = express();
 
 if (process.env.NODE_ENV === "development") app.use(morgan("dev"));
 
+app.use(
+  cors({
+    origin: "*",
+    credentials: true,
+  })
+);
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.use(v1Routes);

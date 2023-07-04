@@ -10,7 +10,7 @@ export interface IUser extends Document {
   password: string;
   forgetCode: string;
   verificationCode: string;
-  inActiveUserExpires: Date;
+  inActive: Date;
   comparePassword(password: string): Promise<boolean>;
 }
 
@@ -71,8 +71,9 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
       maxlength: [6, "Verification code must be exactly 6 characters long!"],
       default: () => generateRandomStringNumber(6),
     },
-    inActiveUserExpires: {
+    inActive: {
       type: Date,
+      expires: process.env.INACTIVE_USERS_EXPIRES_SECONDS,
       default: Date.now,
     },
   },
@@ -104,11 +105,6 @@ userSchema.virtual("comparePassword").get(function (this: IUser) {
     }
   };
 });
-
-userSchema.index(
-  { inActiveUserExpires: 1 },
-  { expireAfterSeconds: Number(process.env.INACTIVE_USERS_EXPIRES_SECONDS) }
-);
 
 const UserModel: IUserModel = mongoose.model<IUser, IUserModel>("User", userSchema);
 

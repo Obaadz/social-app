@@ -1,6 +1,5 @@
-import { NextFunction, Response } from "express";
-import { Request } from "express-jwt";
-import { z } from "zod";
+import { NextFunction, Request, Response } from "express";
+import { ZodError, z } from "zod";
 
 const userSchema = z.object({
   email: z
@@ -27,11 +26,18 @@ export default (req: Request, res: Response, next: NextFunction) => {
 
     next();
   } catch (err) {
-    const errorsAfterParse = JSON.parse(err.message);
+    if (err instanceof ZodError) {
+      const errorsAfterParse = JSON.parse(err.message);
 
-    res.status(400).json({
+      return res.status(400).json({
+        isSuccess: false,
+        error: errorsAfterParse[0]?.message || err.message || "Something went wrong",
+      });
+    }
+
+    return res.status(400).json({
       isSuccess: false,
-      error: errorsAfterParse[0].message || "Something went wrong",
+      error: err.message || "Something went wrong",
     });
   }
 };

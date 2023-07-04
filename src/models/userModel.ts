@@ -12,6 +12,7 @@ export interface IUser extends Document {
   verificationCode: string;
   inActive: Date;
   comparePassword(password: string): Promise<boolean>;
+  compareVerificationCode(verificationCode: string): boolean;
 }
 
 export interface IUserModel extends Model<IUser> {}
@@ -70,11 +71,17 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
       minlength: [6, "Verification code must be exactly 6 characters long!"],
       maxlength: [6, "Verification code must be exactly 6 characters long!"],
       default: () => generateRandomStringNumber(6),
+      immutable: true,
     },
     inActive: {
       type: Date,
       expires: process.env.INACTIVE_USERS_EXPIRES_SECONDS,
       default: Date.now,
+      immutable: true,
+    },
+    __v: {
+      type: Number,
+      select: false,
     },
   },
   { toJSON: { virtuals: true } } // Enable virtuals in toJSON output
@@ -104,6 +111,10 @@ userSchema.virtual("comparePassword").get(function (this: IUser) {
       throw new Error("Error while comparing passwords");
     }
   };
+});
+
+userSchema.virtual("compareVerificationCode").get(function (this: IUser) {
+  return (verificationCode: string) => verificationCode === this.verificationCode;
 });
 
 const UserModel: IUserModel = mongoose.model<IUser, IUserModel>("User", userSchema);

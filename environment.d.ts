@@ -6,6 +6,9 @@ declare global {
       DB_URI: string;
       SECRET: string;
       INACTIVE_USERS_EXPIRES_SECONDS: string;
+      JWT_EXPIRE_TIME: string;
+      GMAIL_USER: string;
+      GMAIL_PASS: string;
     }
   }
 }

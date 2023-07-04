@@ -2,14 +2,14 @@ import mongoose, { Document, Model, Schema } from "mongoose";
 import { z } from "zod";
 import bcrypt from "bcrypt";
 import uniqueValidator from "mongoose-unique-validator";
-import generateRandomNumber from "../utils/generateRandomNumber";
+import generateRandomStringNumber from "../utils/generateRandomStringNumber.js";
 
 export interface IUser extends Document {
   fullName: string;
   email: string;
   password: string;
   forgetCode: string;
-  verificationCode: String;
+  verificationCode: string;
   inActiveUserExpires: Date;
   comparePassword(password: string): Promise<boolean>;
 }
@@ -53,25 +53,23 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
       type: String,
       required: [true, "Password is required!"],
       minlength: [6, "Password must be at least 6 characters long!"],
-      maxlength: [100, "password cannot exceed 100 characters!"],
+      maxlength: [100, "Password cannot exceed 100 characters!"],
     },
     forgetCode: {
       code: {
         type: String,
         minlength: [6, "Forget code must be exactly 6 characters long!"],
         maxlength: [6, "Forget code must be exactly 6 characters long!"],
-        required: true,
       },
       expiresAt: {
         type: Date,
-        required: true,
       },
     },
     verificationCode: {
       type: String,
       minlength: [6, "Verification code must be exactly 6 characters long!"],
       maxlength: [6, "Verification code must be exactly 6 characters long!"],
-      default: () => generateRandomNumber(6),
+      default: () => generateRandomStringNumber(6),
     },
     inActiveUserExpires: {
       type: Date,
@@ -108,11 +106,10 @@ userSchema.virtual("comparePassword").get(function (this: IUser) {
 });
 
 userSchema.index(
-  { unActiveExpires: 1 },
+  { inActiveUserExpires: 1 },
   { expireAfterSeconds: Number(process.env.INACTIVE_USERS_EXPIRES_SECONDS) }
 );
 
-const UserModel: IUserModel =
-  mongoose.models.User || mongoose.model<IUser, IUserModel>("User", userSchema);
+const UserModel: IUserModel = mongoose.model<IUser, IUserModel>("User", userSchema);
 
 export default UserModel;

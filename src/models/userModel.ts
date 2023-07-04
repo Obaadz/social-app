@@ -13,6 +13,7 @@ export interface IUser extends Document {
   inActive: Date;
   comparePassword(password: string): Promise<boolean>;
   compareVerificationCode(verificationCode: string): boolean;
+  compareForgetCode(forgetCode: string): boolean;
 }
 
 export interface IUserModel extends Model<IUser> {}
@@ -57,27 +58,18 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
       maxlength: [100, "Password cannot exceed 100 characters!"],
     },
     forgetCode: {
-      code: {
-        type: String,
-        minlength: [6, "Forget code must be exactly 6 characters long!"],
-        maxlength: [6, "Forget code must be exactly 6 characters long!"],
-      },
-      expiresAt: {
-        type: Date,
-      },
+      type: String,
+      minlength: [4, "Forget code must be exactly 4 digits long!"],
+      maxlength: [4, "Forget code must be exactly 4 digits long!"],
     },
     verificationCode: {
       type: String,
-      minlength: [6, "Verification code must be exactly 6 characters long!"],
-      maxlength: [6, "Verification code must be exactly 6 characters long!"],
-      default: () => generateRandomStringNumber(6),
-      immutable: true,
+      minlength: [4, "Verification code must be exactly 4 digits long!"],
+      maxlength: [4, "Verification code must be exactly 4 digits long!"],
     },
     inActive: {
       type: Date,
       expires: process.env.INACTIVE_USERS_EXPIRES_SECONDS,
-      default: Date.now,
-      immutable: true,
     },
     __v: {
       type: Number,
@@ -115,6 +107,10 @@ userSchema.virtual("comparePassword").get(function (this: IUser) {
 
 userSchema.virtual("compareVerificationCode").get(function (this: IUser) {
   return (verificationCode: string) => verificationCode === this.verificationCode;
+});
+
+userSchema.virtual("compareForgetCode").get(function (this: IUser) {
+  return (forgetCode: string) => forgetCode === this.forgetCode;
 });
 
 const UserModel: IUserModel = mongoose.model<IUser, IUserModel>("User", userSchema);

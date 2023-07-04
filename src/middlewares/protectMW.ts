@@ -1,25 +1,28 @@
 import { NextFunction, Request, Response } from "express";
 import { ZodError, z } from "zod";
-import jwt from "jsonwebtoken";
-import UserModel, { IUser } from "../models/userModel.js";
+import { IUser } from "../models/userModel.js";
+import tokenSchema from "../utils/validators/schema/tokenSchema.js";
+import getUserByToken from "../utils/getUserByToken.js";
 
-const tokenSchema = z.object({
-  token: z.string({ required_error: "Token is required!" }),
+const tokenBodySchema = z.object({
+  token: tokenSchema,
 });
 
-export type UserFromProtected = Required<z.infer<typeof tokenSchema>> & { dbUser: IUser };
+export type UserFromProtected = Required<z.infer<typeof tokenBodySchema>> & {
+  dbUser: IUser;
+};
 
-export default async (req: Request, res: Response, next: NextFunction) => {
+export default async (
+  req: Request<any, any, UserFromProtected>,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    tokenSchema.parse(req.body);
+    tokenBodySchema.parse(req.body);
 
-    const verifiedToken = jwt.verify(req.body.token, process.env.SECRET);
+    const dbUser = await getUserByToken(req.body.token as string);
 
-    if (typeof verifiedToken === "string") throw new Error("Invalid token");
-
-    req.body.dbUser = await UserModel.findOne({ _id: verifiedToken.userId });
-
-    if (!req.body.dbUser) throw new Error("User not found...");
+    req.body.dbUser = dbUser;
 
     next();
   } catch (err) {

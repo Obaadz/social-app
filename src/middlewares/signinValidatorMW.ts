@@ -1,15 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import { ZodError, z } from "zod";
+import emailSchema from "../utils/validators/schema/emailSchema.js";
+import passwordSchema from "../utils/validators/schema/passwordSchema.js";
 
 const userSchema = z.object({
-  email: z
-    .string({ required_error: "Email is required!" })
-    .email()
-    .max(100, "Email cannot exceed 100 characters!"),
-  password: z
-    .string({ required_error: "Password is required!" })
-    .min(6, "Password must be at least 6 characters long!")
-    .max(100, "Password cannot exceed 100 characters!"),
+  email: emailSchema,
+  password: passwordSchema,
 });
 
 export type SigninUser = Required<z.infer<typeof userSchema>>;

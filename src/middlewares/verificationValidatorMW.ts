@@ -3,7 +3,11 @@ import { ZodError, z } from "zod";
 import { UserFromProtected } from "./protectMW.js";
 
 const verificationSchema = z.object({
-  verificationCode: z.string({ required_error: "verificationCode is required!" }),
+  verificationCode: z
+    .string({ required_error: "Verification code is required!" })
+    .regex(/^\d+$/, "Verification code must be only integer number")
+    .min(4, "Verification code must be exactly 4 digits long!")
+    .max(4, "Verification code must be exactly 4 digits long!"),
 });
 
 export type UserFromVerificationMW = Required<z.infer<typeof verificationSchema>> &
@@ -15,9 +19,11 @@ export default async (
   next: NextFunction
 ) => {
   try {
-    if (!req.body.dbUser.inActive) throw new Error("User is already active!");
+    if (!req.body.dbUser?.inActive) throw new Error("User is already active!");
 
     verificationSchema.parse(req.body);
+
+    console.log(2);
 
     next();
   } catch (err) {

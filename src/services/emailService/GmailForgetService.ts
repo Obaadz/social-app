@@ -1,7 +1,7 @@
 import nodemailer, { Transporter } from "nodemailer";
-import { IEmailVerificationService } from "./interface.js";
+import { IEmailForgetService } from "./interface.js";
 
-class GmailVerificationService implements IEmailVerificationService {
+class GmailForgetService implements IEmailForgetService {
   private readonly transporter: Transporter;
 
   constructor() {
@@ -16,16 +16,16 @@ class GmailVerificationService implements IEmailVerificationService {
     });
   }
 
-  async sendEmail(email: string, verificationCode: string): Promise<void> {
+  async sendEmail(email: string, forgetCode: string): Promise<void> {
     const mailOptions = {
       from: process.env.GMAIL_PASS,
       to: email,
-      subject: "Verification Email for social application",
-      text: `Your verification code is: ${verificationCode}`,
+      subject: "Forget Email for social application",
+      text: `Your forget code is: ${forgetCode}`,
     };
 
     await this.transporter.sendMail(mailOptions);
   }
 }
 
-export default GmailVerificationService;
+export default GmailForgetService;

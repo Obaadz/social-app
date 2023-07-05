@@ -1,7 +1,8 @@
-import mongoose, { Document, Model, Schema } from "mongoose";
+import mongoose, { Document, Model, Schema, Types } from "mongoose";
 import { z } from "zod";
 import bcrypt from "bcrypt";
 import uniqueValidator from "mongoose-unique-validator";
+import categories from "../utils/categories.js";
 
 export interface IUser extends Document {
   fullName: string;
@@ -10,6 +11,9 @@ export interface IUser extends Document {
   forgetCode: string;
   verificationCode: string;
   inActive: Date;
+  hobbies: string[];
+  followers: IUser[] | Types.ObjectId[];
+  following: IUser[] | Types.ObjectId[];
   comparePassword(password: string): Promise<boolean>;
   compareVerificationCode(verificationCode: string): boolean;
   compareForgetCode(forgetCode: string): boolean;
@@ -69,6 +73,11 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
     inActive: {
       type: Date,
       expires: process.env.INACTIVE_USERS_EXPIRES_SECONDS,
+    },
+    hobbies: {
+      type: [String],
+      enum: categories,
+      default: [],
     },
     __v: {
       type: Number,

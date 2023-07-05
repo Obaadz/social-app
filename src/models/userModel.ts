@@ -2,7 +2,6 @@ import mongoose, { Document, Model, Schema } from "mongoose";
 import { z } from "zod";
 import bcrypt from "bcrypt";
 import uniqueValidator from "mongoose-unique-validator";
-import generateRandomStringNumber from "../utils/generateRandomStringNumber.js";
 
 export interface IUser extends Document {
   fullName: string;

@@ -18,13 +18,16 @@ class GmailVerificationService implements IEmailVerificationService {
 
   async sendEmail(email: string, verificationCode: string): Promise<void> {
     const mailOptions = {
-      from: process.env.GMAIL_PASS,
+      from: "I.Click <" + process.env.GMAIL_USER + ">",
       to: email,
       subject: "Verification Email for social application",
       text: `Your verification code is: ${verificationCode}`,
     };
 
-    await this.transporter.sendMail(mailOptions);
+    this.transporter.sendMail(mailOptions, (err, info) => {
+      if (err) console.log(err);
+      else console.log(info);
+    });
   }
 }
 

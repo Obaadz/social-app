@@ -5,11 +5,7 @@ import UserModel from "../models/userModel.js";
 import generateToken from "../utils/generateToken.js";
 import { UserFromProtected } from "../middlewares/protectMW.js";
 import generateRandomStringNumber from "../utils/generateRandomStringNumber.js";
-import {
-  DataFromForgetValidatorMW,
-  ForgetOperations,
-  forgetOperationEnum,
-} from "../middlewares/forgetValidatorMW.js";
+import { DataFromForgetValidatorMW } from "../middlewares/forgetValidatorMW.js";
 import ForgetOperationHandlerFactory from "../utils/classes/forget/ForgetOperationHandlerFactory.js";
 
 export default class UserController {
@@ -36,6 +32,8 @@ export default class UserController {
   static async signin(req: Request<any, any, SignupUser>, res: Response) {
     try {
       const dbUser = await UserModel.findOne({ email: req.body.email });
+
+      if (!dbUser) throw new Error("Email or password incorrect");
 
       const isCorrectPassword = await dbUser.comparePassword(req.body.password);
 

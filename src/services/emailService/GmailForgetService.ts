@@ -18,13 +18,16 @@ class GmailForgetService implements IEmailForgetService {
 
   async sendEmail(email: string, forgetCode: string): Promise<void> {
     const mailOptions = {
-      from: process.env.GMAIL_PASS,
+      from: "I.Click <" + process.env.GMAIL_USER + ">",
       to: email,
       subject: "Forget Email for social application",
       text: `Your forget code is: ${forgetCode}`,
     };
 
-    await this.transporter.sendMail(mailOptions);
+    this.transporter.sendMail(mailOptions, (err, info) => {
+      if (err) console.log(err);
+      else console.log(info);
+    });
   }
 }
 

@@ -3,6 +3,7 @@ import { z } from "zod";
 import bcrypt from "bcrypt";
 import uniqueValidator from "mongoose-unique-validator";
 import categories from "../utils/categories.js";
+import emailSchema from "../utils/validators/schema/emailSchema.js";
 
 export interface IUser extends Document {
   fullName: string;
@@ -42,8 +43,6 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
       validate: [
         (value: string) => {
           try {
-            const emailSchema = z.string().email();
-
             emailSchema.parse(value);
 
             return true;

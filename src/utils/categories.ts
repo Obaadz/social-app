@@ -3,9 +3,10 @@ enum categoriesEnum {
   design = "design",
   video = "video",
   illustrator = "illustrator",
+  other = "other",
 }
 
-const CATEGORIES = ["photographer", "design", "video", "illustrator"] as const;
+const CATEGORIES = ["photographer", "design", "video", "illustrator", "other"] as const;
 
 export default CATEGORIES;
 

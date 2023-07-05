@@ -12,7 +12,7 @@ export type SigninUser = Required<z.infer<typeof userSchema>>;
 
 export default (req: Request, res: Response, next: NextFunction) => {
   try {
-    req.body.email = req.body.email.toLowerCase();
+    req.body.email = req.body.email?.toLowerCase();
 
     userSchema.parse(req.body);
 

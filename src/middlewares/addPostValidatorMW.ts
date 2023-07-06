@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { ZodError, z } from "zod";
-import { UserFromProtected } from "./protectBodyMW.js";
+import { UserFromProtectBodyMW } from "./protectBodyMW.js";
 import imageSchema from "../utils/validators/schema/imageSchema.js";
 import categorySchema from "../utils/validators/schema/categorySchema.js";
 
@@ -19,7 +19,7 @@ const postSchema = z.object({
 export type DataFromAddPost = Required<z.infer<typeof postSchema>>;
 
 export default (
-  req: Request<any, any, UserFromProtected>,
+  req: Request<any, any, UserFromProtectBodyMW>,
   res: Response,
   next: NextFunction
 ) => {

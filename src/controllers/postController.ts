@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
-import { UserFromProtected } from "../middlewares/protectBodyMW.js";
+import { UserFromProtectBodyMW } from "../middlewares/protectBodyMW.js";
 import { DataFromAddPost } from "../middlewares/addPostValidatorMW.js";
 import PostModel from "../models/postModel.js";
 
 export default class PostController {
   static async addPost(
-    req: Request<any, any, UserFromProtected & DataFromAddPost>,
+    req: Request<any, any, UserFromProtectBodyMW & DataFromAddPost>,
     res: Response
   ) {
     try {

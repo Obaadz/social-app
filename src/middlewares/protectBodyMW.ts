@@ -9,12 +9,12 @@ const tokenBodySchema = z.object({
   token: tokenSchema,
 });
 
-export type UserFromProtected = Required<z.infer<typeof tokenBodySchema>> & {
+export type UserFromProtectBodyMW = Required<z.infer<typeof tokenBodySchema>> & {
   dbUser: IUser;
 };
 
 export default async (
-  req: Request<any, any, UserFromProtected & DataFromSkipIsActiveMW>,
+  req: Request<any, any, UserFromProtectBodyMW & DataFromSkipIsActiveMW>,
   res: Response,
   next: NextFunction
 ) => {

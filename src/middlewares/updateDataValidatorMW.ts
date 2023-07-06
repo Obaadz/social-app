@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { ZodError, z } from "zod";
-import { UserFromProtected } from "./protectBodyMW.js";
+import { UserFromProtectBodyMW } from "./protectBodyMW.js";
 import passwordSchema from "../utils/validators/schema/passwordSchema.js";
 import fullNameSchema from "../utils/validators/schema/fullNameSchema.js";
 import hobbiesSchema from "../utils/validators/schema/hobbiesSchema.js";
@@ -18,7 +18,7 @@ const updateSchema = z
 export type DataFromUpdateDataValidatorMW = Required<z.infer<typeof updateSchema>>;
 
 export default async (
-  req: Request<any, any, UserFromProtected>,
+  req: Request<any, any, UserFromProtectBodyMW>,
   res: Response,
   next: NextFunction
 ) => {

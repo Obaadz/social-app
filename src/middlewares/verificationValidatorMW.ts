@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { ZodError, z } from "zod";
-import { UserFromProtected } from "./protectBodyMW.js";
+import { UserFromProtectBodyMW } from "./protectBodyMW.js";
 
 const verificationSchema = z.object({
   verificationCode: z
@@ -11,7 +11,7 @@ const verificationSchema = z.object({
 });
 
 export type UserFromVerificationMW = Required<z.infer<typeof verificationSchema>> &
-  UserFromProtected;
+  UserFromProtectBodyMW;
 
 export default async (
   req: Request<any, any, UserFromVerificationMW>,
@@ -22,8 +22,6 @@ export default async (
     if (!req.body.dbUser?.inActive) throw new Error("User is already active!");
 
     verificationSchema.parse(req.body);
-
-    console.log(2);
 
     next();
   } catch (err) {

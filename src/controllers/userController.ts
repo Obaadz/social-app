@@ -3,12 +3,14 @@ import type { SignupUser } from "../middlewares/signupValidatorMW.js";
 import GmailVerificationService from "../services/emailService/GmailVerificationService.js";
 import UserModel from "../models/userModel.js";
 import generateToken from "../utils/generateToken.js";
-import { UserFromProtected } from "../middlewares/protectBodyMW.js";
+import { UserFromProtectBodyMW } from "../middlewares/protectBodyMW.js";
 import generateRandomStringNumber from "../utils/generateRandomStringNumber.js";
 import { DataFromForgetValidatorMW } from "../middlewares/forgetValidatorMW.js";
 import ForgetOperationHandlerFactory from "../utils/classes/forget/ForgetOperationHandlerFactory.js";
 import { DataFromUpdateDataValidatorMW } from "../middlewares/updateDataValidatorMW.js";
 import generateHashedPassword from "../utils/generateHashedPassword.js";
+import { UserFromProtectHeaderMW } from "../middlewares/protectHeaderMW.js";
+import { DataFromSearchValidatorMW } from "../middlewares/userSearchValidatorMW.js";
 
 export default class UserController {
   static async signup(req: Request<any, any, SignupUser>, res: Response) {
@@ -56,7 +58,7 @@ export default class UserController {
   }
 
   static async verify(
-    req: Request<any, any, UserFromProtected & { verificationCode: string }>,
+    req: Request<any, any, UserFromProtectBodyMW & { verificationCode: string }>,
     res: Response
   ) {
     try {
@@ -96,7 +98,7 @@ export default class UserController {
   }
 
   static async updateData(
-    req: Request<any, any, UserFromProtected & DataFromUpdateDataValidatorMW>,
+    req: Request<any, any, UserFromProtectBodyMW & DataFromUpdateDataValidatorMW>,
     res: Response
   ) {
     try {
@@ -115,6 +117,47 @@ export default class UserController {
       console.log("Error on user controller:", err.message);
 
       return res.status(401).json({ isSuccess: false, error: err.message });
+    }
+  }
+
+  static async search(
+    req: Request<any, any, UserFromProtectHeaderMW, DataFromSearchValidatorMW>,
+    res: Response
+  ) {
+    try {
+      const nameRegex = new RegExp(`^${req.query.name}`, "i");
+
+      const totalUsersWithThisName = await UserModel.countDocuments({
+        fullName: nameRegex,
+      });
+
+      const totalPages = Math.ceil(
+        totalUsersWithThisName / Number(process.env.PAGE_LIMIT)
+      );
+
+      if (totalPages < Number(req.query.page)) throw new Error("No results found");
+
+      const dbUsers = await UserModel.find(
+        {
+          fullName: nameRegex,
+        },
+        { fullName: 1, image: 1, followersCount: { $size: "$followers" } },
+        {
+          limit: Number(process.env.PAGE_LIMIT),
+          skip: Number(process.env.PAGE_LIMIT) * (Number(req.query.page) - 1),
+          sort: { followers: -1, fullName: 1 },
+        }
+      );
+
+      res.status(201).json({
+        isSuccess: true,
+        users: dbUsers,
+        totalPages,
+      });
+    } catch (err) {
+      console.log("Error on user controller:", err.message);
+
+      res.status(401).json({ isSuccess: false, error: err.message });
     }
   }
 }

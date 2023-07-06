@@ -3,6 +3,9 @@ import { IUser } from "./userModel.js";
 import { IComment } from "./commentModel.js";
 import imageSchema from "../utils/validators/schema/imageSchema.js";
 import CATEGORIES from "../utils/categories.js";
+import loadEnvironment from "../utils/loadEnvironment.js";
+
+loadEnvironment();
 
 export interface IPost extends Document {
   caption: string;

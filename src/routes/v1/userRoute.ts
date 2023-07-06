@@ -29,8 +29,8 @@ userRoutes.put(
 
 userRoutes.put(
   "/users",
-  imageBytesConvertToURLMW,
   protectMW,
+  imageBytesConvertToURLMW,
   updateDataValidatorMW,
   UserController.updateData
 );

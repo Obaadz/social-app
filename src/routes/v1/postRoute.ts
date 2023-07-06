@@ -8,8 +8,8 @@ const postRoutes = express.Router();
 
 postRoutes.post(
   "/posts",
-  imageBytesConvertToURLMW,
   protectMW,
+  imageBytesConvertToURLMW,
   addPostValidatorMW,
   PostController.addPost
 );

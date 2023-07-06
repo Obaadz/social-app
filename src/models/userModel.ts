@@ -32,7 +32,6 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
     fullName: {
       type: String,
       required: [true, "Full name is required!"],
-      lowercase: true,
       trim: true,
       minlength: [3, "Full name must be at least 3 characters long!"],
       maxlength: [15, "Full name cannot exceed 15 characters!"],
@@ -118,7 +117,7 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
       select: false,
     },
   },
-  { toJSON: { virtuals: true } } // Enable virtuals in toJSON output
+  { toJSON: { virtuals: true }, id: false } // Enable virtuals in toJSON output
 );
 
 userSchema.plugin(uniqueValidator, { message: "There is another user with this email!" });

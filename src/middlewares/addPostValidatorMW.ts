@@ -3,6 +3,7 @@ import { ZodError, z } from "zod";
 import { UserFromProtected } from "./protectMW.js";
 import CATEGORIES from "../utils/categories.js";
 import imageSchema from "../utils/validators/schema/imageSchema.js";
+import categorySchema from "../utils/validators/schema/categorySchema.js";
 
 const postSchema = z.object({
   caption: z
@@ -13,7 +14,7 @@ const postSchema = z.object({
     )
     .optional(),
   image: imageSchema,
-  category: z.enum(CATEGORIES),
+  category: categorySchema,
 });
 
 export type DataFromAddPost = Required<z.infer<typeof postSchema>>;

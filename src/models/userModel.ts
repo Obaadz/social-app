@@ -2,8 +2,9 @@ import mongoose, { Document, Model, Schema, Types } from "mongoose";
 import { z } from "zod";
 import bcrypt from "bcrypt";
 import uniqueValidator from "mongoose-unique-validator";
-import categories from "../utils/categories.js";
+import CATEGORIES from "../utils/categories.js";
 import emailSchema from "../utils/validators/schema/emailSchema.js";
+import generateHashedPassword from "../utils/generateHashedPassword.js";
 
 export interface IUser extends Document {
   fullName: string;
@@ -75,7 +76,7 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
     },
     hobbies: {
       type: [String],
-      enum: categories,
+      enum: CATEGORIES,
       default: [],
     },
     __v: {
@@ -90,9 +91,7 @@ userSchema.plugin(uniqueValidator, { message: "There is another user with this e
 
 userSchema.pre<IUser>("save", async function (next) {
   try {
-    const saltRounds = 10;
-
-    const hashedPassword = await bcrypt.hash(this.password, saltRounds);
+    const hashedPassword = await generateHashedPassword(this.password);
 
     this.password = hashedPassword;
 

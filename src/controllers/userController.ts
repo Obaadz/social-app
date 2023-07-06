@@ -7,6 +7,8 @@ import { UserFromProtected } from "../middlewares/protectMW.js";
 import generateRandomStringNumber from "../utils/generateRandomStringNumber.js";
 import { DataFromForgetValidatorMW } from "../middlewares/forgetValidatorMW.js";
 import ForgetOperationHandlerFactory from "../utils/classes/forget/ForgetOperationHandlerFactory.js";
+import { DataFromUpdateDataValidatorMW } from "../middlewares/updateDataValidatorMW.js";
+import generateHashedPassword from "../utils/generateHashedPassword.js";
 
 export default class UserController {
   static async signup(req: Request<any, any, SignupUser>, res: Response) {
@@ -86,6 +88,29 @@ export default class UserController {
       const handler = ForgetOperationHandlerFactory.createHandler(req.body.operation);
 
       return await handler.handle(req, res);
+    } catch (err) {
+      console.log("Error on user controller:", err.message);
+
+      return res.status(401).json({ isSuccess: false, error: err.message });
+    }
+  }
+
+  static async updateData(
+    req: Request<any, any, UserFromProtected & DataFromUpdateDataValidatorMW>,
+    res: Response
+  ) {
+    try {
+      await UserModel.updateOne(
+        { _id: req.body.dbUser._id },
+        {
+          ...req.body,
+          password: req.body.password
+            ? await generateHashedPassword(req.body.password)
+            : undefined,
+        }
+      );
+
+      res.status(200).json({ isSuccess: true });
     } catch (err) {
       console.log("Error on user controller:", err.message);
 

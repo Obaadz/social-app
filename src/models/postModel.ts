@@ -2,6 +2,7 @@ import mongoose, { Document, Model, Schema, Types } from "mongoose";
 import { IUser } from "./userModel.js";
 import { IComment } from "./commentModel.js";
 import imageSchema from "../utils/validators/schema/imageSchema.js";
+import CATEGORIES from "../utils/categories.js";
 
 export interface IPost extends Document {
   caption: string;
@@ -55,6 +56,7 @@ const postSchema: Schema<IPost> = new mongoose.Schema({
   },
   category: {
     type: String,
+    enum: CATEGORIES,
     required: [true, "Category is required!"],
   },
   comments: {

@@ -6,6 +6,7 @@ import protectMW from "../../middlewares/protectMW.js";
 import verificationValidatorMW from "../../middlewares/verificationValidatorMW.js";
 import forgetValidatorMW from "../../middlewares/forgetValidatorMW.js";
 import skipIsActiveCheckingMW from "../../middlewares/skipIsActiveCheckingMW.js";
+import updateDataValidatorMW from "../../middlewares/updateDataValidatorMW.js";
 
 const userRoutes = express.Router();
 
@@ -24,5 +25,7 @@ userRoutes.put(
   forgetValidatorMW,
   UserController.generateAndSendForgetAndChangePW
 );
+
+userRoutes.put("/users", protectMW, updateDataValidatorMW, UserController.updateData);
 
 export default userRoutes;

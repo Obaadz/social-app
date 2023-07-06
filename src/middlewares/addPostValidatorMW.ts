@@ -9,8 +9,8 @@ const postSchema = z.object({
   caption: z
     .string()
     .max(
-      Number(process.env.MAX_POST_LENGTH),
-      `Max post length cannot exceed ${process.env.MAX_POST_LENGTH} characters!`
+      Number(process.env.MAX_POST_CAPTION_LENGTH),
+      `Max post length cannot exceed ${process.env.MAX_POST_CAPTION_LENGTH} characters!`
     )
     .optional(),
   image: imageSchema,

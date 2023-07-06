@@ -20,8 +20,8 @@ const postSchema: Schema<IPost> = new mongoose.Schema({
   caption: {
     type: String,
     maxlength: [
-      Number(process.env.MAX_POST_LENGTH),
-      `Max post length cannot exceed ${process.env.MAX_POST_LENGTH} characters!`,
+      Number(process.env.MAX_POST_CAPTION_LENGTH),
+      `Max post length cannot exceed ${process.env.MAX_POST_CAPTION_LENGTH} characters!`,
     ],
   },
   image: {

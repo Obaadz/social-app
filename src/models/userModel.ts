@@ -5,6 +5,7 @@ import uniqueValidator from "mongoose-unique-validator";
 import CATEGORIES from "../utils/categories.js";
 import emailSchema from "../utils/validators/schema/emailSchema.js";
 import generateHashedPassword from "../utils/generateHashedPassword.js";
+import imageSchema from "../utils/validators/schema/imageSchema.js";
 
 export interface IUser extends Document {
   fullName: string;
@@ -16,6 +17,7 @@ export interface IUser extends Document {
   hobbies: string[];
   followers: IUser[] | Types.ObjectId[];
   following: IUser[] | Types.ObjectId[];
+  image: string;
   comparePassword(password: string): Promise<boolean>;
   compareVerificationCode(verificationCode: string): boolean;
   compareForgetCode(forgetCode: string): boolean;
@@ -78,6 +80,21 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
       type: [String],
       enum: CATEGORIES,
       default: [],
+    },
+    image: {
+      type: String,
+      validate: [
+        (value: string) => {
+          try {
+            imageSchema.parse(value);
+
+            return true;
+          } catch (err) {
+            return false;
+          }
+        },
+        "Invalid image url!",
+      ],
     },
     __v: {
       type: Number,

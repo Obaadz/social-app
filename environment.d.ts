@@ -9,6 +9,7 @@ declare global {
       JWT_EXPIRE_TIME: string;
       GMAIL_USER: string;
       GMAIL_PASS: string;
+      MAX_POST_LENGTH: string;
     }
   }
 }

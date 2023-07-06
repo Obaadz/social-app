@@ -1,12 +1,18 @@
 enum categoriesEnum {
   photographer = "photographer",
-  design = "design",
-  video = "video",
+  designer = "designer",
+  video_creator = "video creator",
   illustrator = "illustrator",
   other = "other",
 }
 
-const CATEGORIES = ["photographer", "design", "video", "illustrator", "other"] as const;
+const CATEGORIES = [
+  "photographer",
+  "designer",
+  "video creator",
+  "illustrator",
+  "other",
+] as const;
 
 export default CATEGORIES;
 

@@ -10,6 +10,7 @@ declare global {
       GMAIL_USER: string;
       GMAIL_PASS: string;
       MAX_POST_CAPTION_LENGTH: string;
+      DOMAIN: string;
     }
   }
 }

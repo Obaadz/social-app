@@ -1,8 +1,8 @@
 import { z } from "zod";
-import CATEGORIES from "../../categories.js";
+import HOBBIES from "../../hobbies.js";
 
 export default z.array(
-  z.enum(CATEGORIES, {
+  z.enum(HOBBIES, {
     errorMap: (issue, ctx) => ({ message: "Invalid hobbies entry!" }),
   })
 );

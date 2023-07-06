@@ -2,11 +2,11 @@ import mongoose, { Document, Model, Schema, Types } from "mongoose";
 import { z } from "zod";
 import bcrypt from "bcrypt";
 import uniqueValidator from "mongoose-unique-validator";
-import CATEGORIES from "../utils/categories.js";
 import emailSchema from "../utils/validators/schema/emailSchema.js";
 import generateHashedPassword from "../utils/generateHashedPassword.js";
 import imageSchema from "../utils/validators/schema/imageSchema.js";
 import { IPost } from "./postModel.js";
+import HOBBIES from "../utils/hobbies.js";
 
 export interface IUser extends Document {
   fullName: string;
@@ -80,7 +80,7 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
     },
     hobbies: {
       type: [String],
-      enum: CATEGORIES,
+      enum: HOBBIES,
       default: [],
     },
     followers: {

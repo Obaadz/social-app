@@ -6,6 +6,7 @@ import CATEGORIES from "../utils/categories.js";
 import emailSchema from "../utils/validators/schema/emailSchema.js";
 import generateHashedPassword from "../utils/generateHashedPassword.js";
 import imageSchema from "../utils/validators/schema/imageSchema.js";
+import { IPost } from "./postModel.js";
 
 export interface IUser extends Document {
   fullName: string;
@@ -17,6 +18,7 @@ export interface IUser extends Document {
   hobbies: string[];
   followers: IUser[] | Types.ObjectId[];
   following: IUser[] | Types.ObjectId[];
+  posts: IPost[] | Types.ObjectId[];
   image: string;
   comparePassword(password: string): Promise<boolean>;
   compareVerificationCode(verificationCode: string): boolean;
@@ -79,6 +81,21 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
     hobbies: {
       type: [String],
       enum: CATEGORIES,
+      default: [],
+    },
+    followers: {
+      type: [Types.ObjectId],
+      ref: "User",
+      default: [],
+    },
+    following: {
+      type: [Types.ObjectId],
+      ref: "User",
+      default: [],
+    },
+    posts: {
+      type: [Types.ObjectId],
+      ref: "Post",
       default: [],
     },
     image: {

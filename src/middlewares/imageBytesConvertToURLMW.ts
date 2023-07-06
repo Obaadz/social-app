@@ -14,7 +14,7 @@ export type DataFromImageBytesConverterMW = {
 
 export default async (req: Request, res: Response, next: NextFunction) => {
   try {
-    if (!req.body.image) next();
+    if (!req.body.image) return next();
 
     imageBytesSchema.parse(req.body.image);
 

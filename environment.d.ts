@@ -12,6 +12,7 @@ declare global {
       MAX_POST_CAPTION_LENGTH: string;
       DOMAIN: string;
       DEFAULT_LIMIT: string;
+      PAGE_LIMIT: string;
     }
   }
 }

@@ -40,4 +40,12 @@ export default z.object({
   DEFAULT_LIMIT: z.string({
     required_error: "DEFAULT_LIMIT environment variable must not be empty",
   }),
+  PAGE_LIMIT: z
+    .string({
+      required_error: "PAGE_LIMIT environment variable must not be empty",
+    })
+    .regex(/^\d+$/, "PAGE_LIMIT must be only integer number")
+    .refine((value) => +value >= 1, {
+      message: "PAGE_LIMIT number must be greater than or equal to 1",
+    }),
 });

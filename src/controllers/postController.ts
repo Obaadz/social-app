@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { UserFromProtected } from "../middlewares/protectMW.js";
 import { DataFromAddPost } from "../middlewares/addPostValidatorMW.js";
 import PostModel from "../models/postModel.js";
+import UserModel from "../models/userModel.js";
 
 export default class PostController {
   static async addPost(
@@ -9,11 +10,17 @@ export default class PostController {
     res: Response
   ) {
     try {
-      await PostModel.create({
+      const dbPost = await PostModel.create({
         caption: req.body.caption,
         image: req.body.image,
         author: req.body.dbUser._id,
         category: req.body.category,
+      });
+
+      await req.body.dbUser.updateOne({
+        $push: {
+          posts: dbPost._id,
+        },
       });
 
       res.status(201).json({ isSuccess: true });

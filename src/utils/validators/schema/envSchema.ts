@@ -37,4 +37,7 @@ export default z.object({
   DOMAIN: z
     .string({ required_error: "DOMAIN environment variable must not be empty" })
     .url("Invalid domain url"),
+  DEFAULT_LIMIT: z.string({
+    required_error: "DEFAULT_LIMIT environment variable must not be empty",
+  }),
 });

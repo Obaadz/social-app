@@ -26,7 +26,7 @@ app.use(
 app.use("/images", express.static("public/images"));
 
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+app.use(express.json({ limit: process.env.DEFAULT_LIMIT }));
 
 app.use(v1Routes);
 

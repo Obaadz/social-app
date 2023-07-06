@@ -11,6 +11,7 @@ declare global {
       GMAIL_PASS: string;
       MAX_POST_CAPTION_LENGTH: string;
       DOMAIN: string;
+      DEFAULT_LIMIT: string;
     }
   }
 }

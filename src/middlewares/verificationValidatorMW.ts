@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { ZodError, z } from "zod";
-import { UserFromProtected } from "./protectMW.js";
+import { UserFromProtected } from "./protectBodyMW.js";
 
 const verificationSchema = z.object({
   verificationCode: z

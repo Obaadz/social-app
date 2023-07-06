@@ -1,5 +1,5 @@
 import express from "express";
-import protectMW from "../../middlewares/protectMW.js";
+import protectBodyMW from "../../middlewares/protectBodyMW.js";
 import addPostValidatorMW from "../../middlewares/addPostValidatorMW.js";
 import PostController from "../../controllers/postController.js";
 import imageBytesConvertToURLMW from "../../middlewares/imageBytesConvertToURLMW.js";
@@ -8,7 +8,7 @@ const postRoutes = express.Router();
 
 postRoutes.post(
   "/posts",
-  protectMW,
+  protectBodyMW,
   imageBytesConvertToURLMW,
   addPostValidatorMW,
   PostController.addPost

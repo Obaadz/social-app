@@ -3,7 +3,7 @@ import type { SignupUser } from "../middlewares/signupValidatorMW.js";
 import GmailVerificationService from "../services/emailService/GmailVerificationService.js";
 import UserModel from "../models/userModel.js";
 import generateToken from "../utils/generateToken.js";
-import { UserFromProtected } from "../middlewares/protectMW.js";
+import { UserFromProtected } from "../middlewares/protectBodyMW.js";
 import generateRandomStringNumber from "../utils/generateRandomStringNumber.js";
 import { DataFromForgetValidatorMW } from "../middlewares/forgetValidatorMW.js";
 import ForgetOperationHandlerFactory from "../utils/classes/forget/ForgetOperationHandlerFactory.js";

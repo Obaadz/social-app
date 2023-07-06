@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { ZodError, z } from "zod";
-import { UserFromProtected } from "./protectMW.js";
+import { UserFromProtected } from "./protectBodyMW.js";
 import imageSchema from "../utils/validators/schema/imageSchema.js";
 import categorySchema from "../utils/validators/schema/categorySchema.js";
 

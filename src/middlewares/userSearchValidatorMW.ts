@@ -4,7 +4,7 @@ import { UserFromProtectHeaderMW } from "./protectHeaderMW.js";
 import getErrorMessage from "../utils/getErrorMessage.js";
 
 const searchSchema = z.object({
-  name: z.string(),
+  name: z.string().min(1, "Name must be at least 1 character long!"),
   page: z
     .string({ required_error: "Page is required!" })
     .regex(/^\d+$/, "Page number must be only integer number")

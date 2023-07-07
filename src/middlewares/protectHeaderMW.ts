@@ -1,9 +1,10 @@
 import { NextFunction, Request, Response } from "express";
-import { ZodError, z } from "zod";
+import { z } from "zod";
 import { IUser } from "../models/userModel.js";
 import tokenSchema from "../utils/validators/schema/tokenSchema.js";
 import getUserByToken from "../utils/getUserByToken.js";
 import extractTokenFromHeader from "../utils/extractTokenFromHeader.js";
+import getErrorMessage from "../utils/getErrorMessage.js";
 
 const protectHeaderSchema = z.object({
   token: tokenSchema.refine((value) => {
@@ -35,18 +36,9 @@ export default async (
 
     next();
   } catch (err) {
-    if (err instanceof ZodError) {
-      const errorsAfterParse = JSON.parse(err.message);
-
-      return res.status(400).json({
-        isSuccess: false,
-        error: errorsAfterParse[0]?.message || err.message || "Something went wrong",
-      });
-    }
-
     return res.status(400).json({
       isSuccess: false,
-      error: err.message || "Something went wrong",
+      error: getErrorMessage(err),
     });
   }
 };

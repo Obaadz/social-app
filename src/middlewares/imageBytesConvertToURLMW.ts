@@ -3,6 +3,7 @@ import { z } from "zod";
 import { v4 } from "uuid";
 import fs from "fs";
 import sharp from "sharp";
+import getErrorMessage from "../utils/getErrorMessage";
 
 const imageBytesSchema = z
   .array(z.number().int(), { invalid_type_error: "Invalid image type!" })
@@ -36,7 +37,7 @@ export default async (req: Request, res: Response, next: NextFunction) => {
   } catch (err) {
     return res.status(400).json({
       isSuccess: false,
-      error: err.message || "Something went wrong",
+      error: getErrorMessage(err),
     });
   }
 };

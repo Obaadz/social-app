@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import getErrorMessage from "../utils/getErrorMessage";
+import getErrorMessage from "../utils/getErrorMessage.js";
 
 export type DataFromSkipIsActiveMW = {
   skipIsActiveChecking?: boolean;

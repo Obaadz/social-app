@@ -3,7 +3,7 @@ import { z } from "zod";
 import { v4 } from "uuid";
 import fs from "fs";
 import sharp from "sharp";
-import getErrorMessage from "../utils/getErrorMessage";
+import getErrorMessage from "../utils/getErrorMessage.js";
 
 const imageBytesSchema = z
   .array(z.number().int(), { invalid_type_error: "Invalid image type!" })

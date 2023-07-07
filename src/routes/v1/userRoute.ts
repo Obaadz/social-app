@@ -10,6 +10,7 @@ import updateDataValidatorMW from "../../middlewares/updateDataValidatorMW.js";
 import imageBytesConvertToURLMW from "../../middlewares/imageBytesConvertToURLMW.js";
 import protectHeaderMW from "../../middlewares/protectHeaderMW.js";
 import userSearchValidatorMW from "../../middlewares/userSearchValidatorMW.js";
+import userGetProfileValidatorMW from "../../middlewares/userGetProfileValidatorMW.js";
 
 const userRoutes = express.Router();
 
@@ -38,4 +39,11 @@ userRoutes.put(
 );
 
 userRoutes.get("/users", protectHeaderMW, userSearchValidatorMW, UserController.search);
+userRoutes.get(
+  ["/users/profile/:userId", "/users/profile"],
+  protectHeaderMW,
+  userGetProfileValidatorMW,
+  UserController.getProfileById
+);
+
 export default userRoutes;

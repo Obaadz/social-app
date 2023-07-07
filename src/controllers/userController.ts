@@ -11,6 +11,8 @@ import { DataFromUpdateDataValidatorMW } from "../middlewares/updateDataValidato
 import generateHashedPassword from "../utils/generateHashedPassword.js";
 import { UserFromProtectHeaderMW } from "../middlewares/protectHeaderMW.js";
 import { DataFromSearchValidatorMW } from "../middlewares/userSearchValidatorMW.js";
+import { Types } from "mongoose";
+import { DataFromGetProfileValidatorMW } from "../middlewares/userGetProfileValidatorMW.js";
 
 export default class UserController {
   static async signup(req: Request<any, any, SignupUser>, res: Response) {
@@ -149,10 +151,40 @@ export default class UserController {
         }
       );
 
-      res.status(201).json({
+      res.status(200).json({
         isSuccess: true,
         users: dbUsers,
         totalPages,
+      });
+    } catch (err) {
+      console.log("Error on user controller:", err.message);
+
+      res.status(401).json({ isSuccess: false, error: err.message });
+    }
+  }
+
+  static async getProfileById(
+    req: Request<DataFromGetProfileValidatorMW, any, UserFromProtectHeaderMW>,
+    res: Response
+  ) {
+    try {
+      const dbUser = await UserModel.findById(req.params.userId, {
+        fullName: 1,
+        image: 1,
+        followersCount: { $size: "$followers" },
+        followingCount: { $size: "$following" },
+        isFollowing: {
+          $cond: {
+            if: { $eq: [req.params.userId, req.body.dbUser._id] },
+            then: "$$REMOVE",
+            else: { $in: [req.body.dbUser._id, "$followers"] },
+          },
+        },
+      });
+
+      res.status(200).json({
+        isSuccess: true,
+        user: dbUser,
       });
     } catch (err) {
       console.log("Error on user controller:", err.message);

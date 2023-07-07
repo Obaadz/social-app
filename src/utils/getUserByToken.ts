@@ -8,7 +8,7 @@ export default async (token: string) => {
 
   const dbUser = await UserModel.findOne({ _id: verifiedToken.userId });
 
-  if (!dbUser) throw new Error("User not found...");
+  if (!dbUser) throw new Error("User not found");
 
   return dbUser;
 };

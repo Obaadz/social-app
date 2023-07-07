@@ -18,7 +18,7 @@ export default (
   next: NextFunction
 ) => {
   try {
-    if (!req.params.userId) req.params.userId = req.body.dbUser._id;
+    if (!req.params.userId) req.params.userId = req.body.dbUser._id.toJSON();
 
     searchSchema.parse(req.params);
 

@@ -173,14 +173,17 @@ export default class UserController {
         image: 1,
         followersCount: { $size: "$followers" },
         followingCount: { $size: "$following" },
+        postsCount: { $size: "$posts" },
         isFollowing: {
           $cond: {
-            if: { $eq: [req.params.userId, req.body.dbUser._id] },
+            if: { $eq: [req.params.userId, req.body.dbUser._id.toJSON()] },
             then: "$$REMOVE",
             else: { $in: [req.body.dbUser._id, "$followers"] },
           },
         },
       });
+
+      if (!dbUser) throw new Error("User not found");
 
       res.status(200).json({
         isSuccess: true,

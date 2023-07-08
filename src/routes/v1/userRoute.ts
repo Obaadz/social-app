@@ -11,6 +11,7 @@ import imageBytesConvertToURLMW from "../../middlewares/imageBytesConvertToURLMW
 import protectHeaderMW from "../../middlewares/protectHeaderMW.js";
 import userSearchValidatorMW from "../../middlewares/userSearchValidatorMW.js";
 import userGetProfileValidatorMW from "../../middlewares/userGetProfileValidatorMW.js";
+import followUnfollowValidatorMW from "../../middlewares/followUnfollowValidatorMW.js";
 
 const userRoutes = express.Router();
 
@@ -44,6 +45,19 @@ userRoutes.get(
   protectHeaderMW,
   userGetProfileValidatorMW,
   UserController.getProfileById
+);
+
+userRoutes.put(
+  "/users/follow",
+  protectBodyMW,
+  followUnfollowValidatorMW,
+  UserController.followById
+);
+userRoutes.put(
+  "/users/unfollow",
+  protectBodyMW,
+  followUnfollowValidatorMW,
+  UserController.unFollowById
 );
 
 export default userRoutes;

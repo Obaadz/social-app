@@ -13,6 +13,7 @@ import { UserFromProtectHeaderMW } from "../middlewares/protectHeaderMW.js";
 import { DataFromSearchValidatorMW } from "../middlewares/userSearchValidatorMW.js";
 import { Types } from "mongoose";
 import { DataFromGetProfileValidatorMW } from "../middlewares/userGetProfileValidatorMW.js";
+import { DataFromfollowUnfollowValidatorMW } from "../middlewares/followUnfollowValidatorMW.js";
 
 export default class UserController {
   static async signup(req: Request<any, any, SignupUser>, res: Response) {
@@ -189,6 +190,45 @@ export default class UserController {
         isSuccess: true,
         user: dbUser,
       });
+    } catch (err) {
+      console.log("Error on user controller:", err.message);
+
+      res.status(401).json({ isSuccess: false, error: err.message });
+    }
+  }
+  static async followById(
+    req: Request<any, any, UserFromProtectBodyMW & { userId: string }>,
+    res: Response
+  ) {
+    try {
+      await UserModel.updateOne(
+        { _id: req.body.userId },
+        { $addToSet: { followers: req.body.dbUser._id } }
+      );
+
+      await req.body.dbUser.updateOne({ $addToSet: { following: req.body.userId } });
+
+      res.status(200).json({ isSuccess: true });
+    } catch (err) {
+      console.log("Error on user controller:", err.message);
+
+      res.status(401).json({ isSuccess: false, error: err.message });
+    }
+  }
+
+  static async unFollowById(
+    req: Request<any, any, UserFromProtectBodyMW & DataFromfollowUnfollowValidatorMW>,
+    res: Response
+  ) {
+    try {
+      await UserModel.updateOne(
+        { _id: req.body.userId },
+        { $pull: { followers: req.body.dbUser._id } }
+      );
+
+      await req.body.dbUser.updateOne({ $pull: { following: req.body.userId } });
+
+      res.status(200).json({ isSuccess: true });
     } catch (err) {
       console.log("Error on user controller:", err.message);
 

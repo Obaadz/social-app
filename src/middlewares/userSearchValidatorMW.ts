@@ -2,15 +2,11 @@ import { NextFunction, Request, Response } from "express";
 import { z } from "zod";
 import { UserFromProtectHeaderMW } from "./protectHeaderMW.js";
 import getErrorMessage from "../utils/getErrorMessage.js";
+import pageSchema from "../utils/validators/schema/pageSchema.js";
 
 const searchSchema = z.object({
   name: z.string().min(1, "Name must be at least 1 character long!"),
-  page: z
-    .string({ required_error: "Page is required!" })
-    .regex(/^\d+$/, "Page number must be only integer number")
-    .refine((value) => +value >= 0, {
-      message: "Page number must be greater than or equal to 1",
-    }),
+  page: pageSchema,
 });
 
 export type DataFromSearchValidatorMW = Required<z.infer<typeof searchSchema>>;

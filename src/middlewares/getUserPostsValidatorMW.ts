@@ -3,10 +3,12 @@ import { z } from "zod";
 import { UserFromProtectHeaderMW } from "./protectHeaderMW.js";
 import getErrorMessage from "../utils/getErrorMessage.js";
 import objectIdSchema from "../utils/validators/schema/objectIdSchema.js";
+import pageSchema from "../utils/validators/schema/pageSchema.js";
 
 const getUserPostsSchema = z.object({
   userId: objectIdSchema,
   imageOnly: z.string().optional(),
+  page: pageSchema
 });
 
 export type DataFromGetUserPostsValidatorMW = Required<

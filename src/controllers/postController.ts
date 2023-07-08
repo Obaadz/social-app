@@ -42,6 +42,11 @@ export default class PostController {
           populate: {
             path: "posts",
             select: req.query.imageOnly ? "image" : ``,
+            options: {
+              limit: Number(process.env.PAGE_LIMIT),
+              skip: Number(process.env.PAGE_LIMIT) * (Number(req.query.page) - 1),
+              sort: { createdAt: -1 },
+            },
           },
         }
       );
@@ -52,7 +57,11 @@ export default class PostController {
         ? dbUser.toJSON({ virtuals: false }).posts
         : dbUser.posts;
 
-      res.status(200).json({ isSuccess: true, posts });
+      const totalPages = Math.ceil(posts.length / Number(process.env.PAGE_LIMIT));
+
+      if (totalPages < Number(req.query.page)) throw new Error("No results found");
+
+      res.status(200).json({ isSuccess: true, posts, totalPages });
     } catch (err) {
       console.log("Error on post controller:", err.message);
 

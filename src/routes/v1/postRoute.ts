@@ -17,7 +17,7 @@ postRoutes.post(
 );
 
 postRoutes.get(
-  "/posts/:userId",
+  ["/users/:userId/posts", "/users/posts"],
   protectHeaderMW,
   getUserPostsValidatorMW,
   PostController.getUserPostsByUserId

@@ -315,7 +315,7 @@ export default class UserController {
               projection: {
                 fullName: 1,
                 image: 1,
-                folowersCount: { $size: "$followers" },
+                followersCount: { $size: "$followers" },
               },
             },
           },

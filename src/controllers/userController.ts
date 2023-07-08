@@ -316,6 +316,7 @@ export default class UserController {
                 fullName: 1,
                 image: 1,
                 followersCount: { $size: "$followers" },
+                isFollowing: { $in: [req.body.dbUser._id, "$followers"] },
               },
             },
           },

@@ -281,7 +281,7 @@ export default class UserController {
 
       if (totalPages < Number(req.query.page)) throw new Error("No results found");
 
-      res.status(200).json({ isSuccess: true, followers: dbUser.followers, totalPages });
+      res.status(200).json({ isSuccess: true, users: dbUser.followers, totalPages });
     } catch (err) {
       console.log("Error on post controller:", err.message);
 
@@ -331,7 +331,7 @@ export default class UserController {
 
       if (totalPages < Number(req.query.page)) throw new Error("No results found");
 
-      res.status(200).json({ isSuccess: true, following: dbUser.following, totalPages });
+      res.status(200).json({ isSuccess: true, users: dbUser.following, totalPages });
     } catch (err) {
       console.log("Error on post controller:", err.message);
 

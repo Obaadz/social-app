@@ -11,7 +11,6 @@ import { DataFromUpdateDataValidatorMW } from "../middlewares/updateDataValidato
 import generateHashedPassword from "../utils/generateHashedPassword.js";
 import { UserFromProtectHeaderMW } from "../middlewares/protectHeaderMW.js";
 import { DataFromSearchValidatorMW } from "../middlewares/userSearchValidatorMW.js";
-import { Types } from "mongoose";
 import { DataFromGetProfileValidatorMW } from "../middlewares/userGetProfileValidatorMW.js";
 import { DataFromfollowUnfollowValidatorMW } from "../middlewares/followUnfollowValidatorMW.js";
 
@@ -196,6 +195,7 @@ export default class UserController {
       res.status(401).json({ isSuccess: false, error: err.message });
     }
   }
+
   static async followById(
     req: Request<any, any, UserFromProtectBodyMW & { userId: string }>,
     res: Response

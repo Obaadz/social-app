@@ -3,6 +3,7 @@ import { UserFromProtectBodyMW } from "../middlewares/protectBodyMW.js";
 import { DataFromAddPost } from "../middlewares/addPostValidatorMW.js";
 import PostModel from "../models/postModel.js";
 import UserModel from "../models/userModel.js";
+import { FlattenMaps } from "mongoose";
 
 export default class PostController {
   static async addPost(
@@ -37,6 +38,7 @@ export default class PostController {
         req.params.userId,
         {
           posts: 1,
+          totalPosts: { $size: "$posts" },
         },
         {
           populate: {
@@ -57,7 +59,10 @@ export default class PostController {
         ? dbUser.toJSON({ virtuals: false }).posts
         : dbUser.posts;
 
-      const totalPages = Math.ceil(posts.length / Number(process.env.PAGE_LIMIT));
+      const totalPages = Math.ceil(
+        dbUser.toJSON<FlattenMaps<{ totalPosts: number }>>().totalPosts /
+          Number(process.env.PAGE_LIMIT)
+      );
 
       if (totalPages < Number(req.query.page)) throw new Error("No results found");
 

@@ -13,6 +13,8 @@ import { UserFromProtectHeaderMW } from "../middlewares/protectHeaderMW.js";
 import { DataFromSearchValidatorMW } from "../middlewares/userSearchValidatorMW.js";
 import { DataFromGetProfileValidatorMW } from "../middlewares/userGetProfileValidatorMW.js";
 import { DataFromfollowUnfollowValidatorMW } from "../middlewares/followUnfollowValidatorMW.js";
+import { FlattenMaps } from "mongoose";
+import { DataFromGetUserFollowersFollowingValidatorMW } from "../middlewares/getUserFollowersFollowingValidatorMW.js";
 
 export default class UserController {
   static async signup(req: Request<any, any, SignupUser>, res: Response) {
@@ -231,6 +233,107 @@ export default class UserController {
       res.status(200).json({ isSuccess: true });
     } catch (err) {
       console.log("Error on user controller:", err.message);
+
+      res.status(401).json({ isSuccess: false, error: err.message });
+    }
+  }
+
+  static async getUserFollowersByUserId(
+    req: Request<
+      Pick<DataFromGetUserFollowersFollowingValidatorMW, "userId">,
+      any,
+      UserFromProtectHeaderMW,
+      Pick<DataFromGetUserFollowersFollowingValidatorMW, "page">
+    >,
+    res: Response
+  ) {
+    try {
+      const dbUser = await UserModel.findById(
+        req.params.userId,
+        {
+          followers: 1,
+          followersCount: { $size: "$followers" },
+        },
+        {
+          populate: {
+            path: "followers",
+            options: {
+              limit: Number(process.env.PAGE_LIMIT),
+              skip: Number(process.env.PAGE_LIMIT) * (Number(req.query.page) - 1),
+              sort: { followers: -1, fullName: 1 },
+              projection: {
+                fullName: 1,
+                image: 1,
+                followersCount: { $size: "$followers" },
+                isFollowing: { $in: [req.body.dbUser._id, "$followers"] },
+              },
+            },
+          },
+        }
+      );
+
+      if (!dbUser?.followers) throw new Error("No results found");
+
+      const totalPages = Math.ceil(
+        dbUser.toJSON<FlattenMaps<{ followersCount: number }>>().followersCount /
+          Number(process.env.PAGE_LIMIT)
+      );
+
+      if (totalPages < Number(req.query.page)) throw new Error("No results found");
+
+      res.status(200).json({ isSuccess: true, followers: dbUser.followers, totalPages });
+    } catch (err) {
+      console.log("Error on post controller:", err.message);
+
+      res.status(401).json({ isSuccess: false, error: err.message });
+    }
+  }
+
+  static async getUserFollowingByUserId(
+    req: Request<
+      Pick<DataFromGetUserFollowersFollowingValidatorMW, "userId">,
+      any,
+      UserFromProtectHeaderMW,
+      Pick<DataFromGetUserFollowersFollowingValidatorMW, "page">
+    >,
+    res: Response
+  ) {
+    try {
+      const dbUser = await UserModel.findById(
+        req.params.userId,
+        {
+          following: 1,
+          followingCount: { $size: "$following" },
+        },
+        {
+          populate: {
+            path: "following",
+            options: {
+              limit: Number(process.env.PAGE_LIMIT),
+              skip: Number(process.env.PAGE_LIMIT) * (Number(req.query.page) - 1),
+              sort: { followers: -1, fullName: 1 },
+              projection: {
+                fullName: 1,
+                image: 1,
+                folowersCount: { $size: "$followers" },
+              },
+            },
+          },
+        }
+      );
+
+      if (!dbUser?.following) throw new Error("No results found");
+
+      const totalPages = Math.ceil(
+        dbUser.toJSON<FlattenMaps<{ followingCount: number }>>().followingCount /
+          Number(process.env.PAGE_LIMIT)
+      );
+
+      if (totalPages < Number(req.query.page)) throw new Error("No results found");
+
+      res.status(200).json({ isSuccess: true, following: dbUser.following, totalPages });
+    } catch (err) {
+      console.log("Error on post controller:", err.message);
 
       res.status(401).json({ isSuccess: false, error: err.message });
     }

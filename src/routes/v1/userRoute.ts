@@ -12,6 +12,7 @@ import protectHeaderMW from "../../middlewares/protectHeaderMW.js";
 import userSearchValidatorMW from "../../middlewares/userSearchValidatorMW.js";
 import userGetProfileValidatorMW from "../../middlewares/userGetProfileValidatorMW.js";
 import followUnfollowValidatorMW from "../../middlewares/followUnfollowValidatorMW.js";
+import getUserFollowersFollowingValidatorMW from "../../middlewares/getUserFollowersFollowingValidatorMW.js";
 
 const userRoutes = express.Router();
 
@@ -60,4 +61,16 @@ userRoutes.put(
   UserController.unFollowById
 );
 
+userRoutes.get(
+  ["/users/:userId/followers/", "/users/followers"],
+  protectHeaderMW,
+  getUserFollowersFollowingValidatorMW,
+  UserController.getUserFollowersByUserId
+);
+userRoutes.get(
+  ["/users/:userId/following/", "/users/following"],
+  protectHeaderMW,
+  getUserFollowersFollowingValidatorMW,
+  UserController.getUserFollowingByUserId
+);
 export default userRoutes;

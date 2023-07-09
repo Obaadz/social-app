@@ -199,7 +199,7 @@ export default class UserController {
   }
 
   static async followById(
-    req: Request<any, any, UserFromProtectBodyMW & { userId: string }>,
+    req: Request<any, any, UserFromProtectBodyMW & DataFromfollowUnfollowValidatorMW>,
     res: Response
   ) {
     try {

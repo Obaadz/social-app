@@ -6,6 +6,7 @@ import imageBytesConvertToURLMW from "../../middlewares/imageBytesConvertToURLMW
 import protectHeaderMW from "../../middlewares/protectHeaderMW.js";
 import getUserPostsValidatorMW from "../../middlewares/getUserPostsValidatorMW.js";
 import getHomePostsValidatorMW from "../../middlewares/getHomePostsValidatorMW.js";
+import likeUnLikeValidatorMW from "../../middlewares/likeUnLikeValidatorMW.js";
 
 const postRoutes = express.Router();
 
@@ -29,6 +30,19 @@ postRoutes.get(
   protectHeaderMW,
   getHomePostsValidatorMW,
   PostController.getHome
+);
+
+postRoutes.put(
+  "/posts/like",
+  protectBodyMW,
+  likeUnLikeValidatorMW,
+  PostController.likePost
+);
+postRoutes.put(
+  "/posts/unlike",
+  protectBodyMW,
+  likeUnLikeValidatorMW,
+  PostController.unLikePost
 );
 
 export default postRoutes;

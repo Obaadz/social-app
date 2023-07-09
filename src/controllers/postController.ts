@@ -6,6 +6,7 @@ import UserModel from "../models/userModel.js";
 import { FlattenMaps } from "mongoose";
 import { UserFromProtectHeaderMW } from "../middlewares/protectHeaderMW.js";
 import { DataFromGetHomePostsValidatorMW } from "../middlewares/getHomePostsValidatorMW.js";
+import { DataFromLikeUnlikeValidatorMW } from "../middlewares/likeUnLikeValidatorMW.js";
 
 export default class PostController {
   static async addPost(
@@ -132,6 +133,67 @@ export default class PostController {
         isSuccess: true,
         posts: dbPosts,
         totalPages,
+      });
+    } catch (err) {
+      console.log("Error on post controller:", err.message);
+
+      res.status(401).json({ isSuccess: false, error: err.message });
+    }
+  }
+
+  static async likePost(
+    req: Request<any, any, UserFromProtectBodyMW & DataFromLikeUnlikeValidatorMW>,
+    res: Response
+  ) {
+    try {
+      const dbPost = await PostModel.findOneAndUpdate(
+        { _id: req.body.postId },
+        { $addToSet: { likes: req.body.dbUser._id } },
+        {
+          new: true,
+          select: {
+            _id: 0,
+            likesCount: { $size: "$likes" },
+          },
+        }
+      );
+
+      if (!dbPost) throw new Error("No results found");
+      console.log(dbPost);
+      res.status(200).json({
+        isSuccess: true,
+        post: dbPost.toJSON({ virtuals: false }),
+      });
+    } catch (err) {
+      console.log("Error on post controller:", err.message);
+
+      res.status(401).json({ isSuccess: false, error: err.message });
+    }
+  }
+
+  static async unLikePost(
+    req: Request<any, any, UserFromProtectBodyMW & DataFromLikeUnlikeValidatorMW>,
+    res: Response
+  ) {
+    try {
+      const dbPost = await PostModel.findOneAndUpdate(
+        { _id: req.body.postId },
+        { $pull: { likes: req.body.dbUser._id } },
+        {
+          new: true,
+          select: {
+            _id: 0,
+            likesCount: { $size: "$likes" },
+          },
+        }
+      );
+
+      if (!dbPost) throw new Error("No results found");
+      console.log(dbPost);
+
+      res.status(200).json({
+        isSuccess: true,
+        post: dbPost.toJSON({ virtuals: false }),
       });
     } catch (err) {
       console.log("Error on post controller:", err.message);

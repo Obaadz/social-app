@@ -10,6 +10,7 @@ declare global {
       GMAIL_USER: string;
       GMAIL_PASS: string;
       MAX_POST_CAPTION_LENGTH: string;
+      MAX_COMMENT_CONTENT_LENGTH: string;
       DOMAIN: string;
       DEFAULT_LIMIT: string;
       PAGE_LIMIT: string;

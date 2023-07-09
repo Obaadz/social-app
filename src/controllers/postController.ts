@@ -82,7 +82,7 @@ export default class PostController {
   ) {
     try {
       const totalPosts = await PostModel.countDocuments(
-        req.query.following
+        req.query.following === "1"
           ? {
               author: {
                 $in: req.body.dbUser.following,
@@ -92,7 +92,7 @@ export default class PostController {
       );
 
       const dbPosts = await PostModel.find(
-        req.query.following
+        req.query.following === "1"
           ? {
               author: {
                 $in: req.body.dbUser.following,
@@ -103,6 +103,7 @@ export default class PostController {
           image: 1,
           author: 1,
           caption: 1,
+          isLiked: { $in: [req.body.dbUser._id, "$likes"] },
           likesCount: { $size: "$likes" },
           createdAt: 1,
         },

@@ -1,0 +1,8 @@
+const MOBILE_CATEGORIES = [
+  "PHOTOGRAPHY",
+  "DESIGN",
+  "MAKING VIDEO",
+  "ILLUSTRATION",
+] as const;
+
+export default MOBILE_CATEGORIES;

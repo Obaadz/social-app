@@ -5,6 +5,7 @@ import PostController from "../../controllers/postController.js";
 import imageBytesConvertToURLMW from "../../middlewares/imageBytesConvertToURLMW.js";
 import protectHeaderMW from "../../middlewares/protectHeaderMW.js";
 import getUserPostsValidatorMW from "../../middlewares/getUserPostsValidatorMW.js";
+import getHomePostsValidatorMW from "../../middlewares/getHomePostsValidatorMW.js";
 
 const postRoutes = express.Router();
 
@@ -21,6 +22,13 @@ postRoutes.get(
   protectHeaderMW,
   getUserPostsValidatorMW,
   PostController.getUserPostsByUserId
+);
+
+postRoutes.get(
+  "/posts",
+  protectHeaderMW,
+  getHomePostsValidatorMW,
+  PostController.getHome
 );
 
 export default postRoutes;

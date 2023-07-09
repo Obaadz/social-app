@@ -7,6 +7,7 @@ import { FlattenMaps } from "mongoose";
 import { UserFromProtectHeaderMW } from "../middlewares/protectHeaderMW.js";
 import { DataFromGetHomePostsValidatorMW } from "../middlewares/getHomePostsValidatorMW.js";
 import { DataFromLikeUnlikeValidatorMW } from "../middlewares/likeUnLikeValidatorMW.js";
+import { DataFromGetPostsByCategoryValidatorMW } from "../middlewares/getPostsByCategoryValidatorMW.js";
 
 export default class PostController {
   static async addPost(
@@ -194,6 +195,71 @@ export default class PostController {
       res.status(200).json({
         isSuccess: true,
         post: dbPost.toJSON({ virtuals: false }),
+      });
+    } catch (err) {
+      console.log("Error on post controller:", err.message);
+
+      res.status(401).json({ isSuccess: false, error: err.message });
+    }
+  }
+
+  static async getPostsByCategory(
+    req: Request<
+      Pick<DataFromGetPostsByCategoryValidatorMW, "category">,
+      any,
+      UserFromProtectHeaderMW,
+      Pick<DataFromGetPostsByCategoryValidatorMW, "page">
+    >,
+    res: Response
+  ) {
+    try {
+      const totalPosts = await PostModel.countDocuments({
+        author: {
+          $nin: req.body.dbUser._id,
+        },
+        category: req.params.category,
+      });
+
+      const dbPosts = await PostModel.find(
+        {
+          author: {
+            $nin: req.body.dbUser.following,
+          },
+          category: req.params.category,
+        },
+        {
+          image: 1,
+          author: 1,
+          caption: 1,
+          isLiked: { $in: [req.body.dbUser._id, "$likes"] },
+          likesCount: { $size: "$likes" },
+          createdAt: 1,
+        },
+        {
+          limit: Number(process.env.PAGE_LIMIT),
+          skip: Number(process.env.PAGE_LIMIT) * (Number(req.query.page) - 1),
+          sort: { createdAt: -1 },
+          populate: {
+            path: "author",
+            select: {
+              fullName: 1,
+              image: 1,
+              isFollowing: { $in: [req.body.dbUser._id, "$followers"] },
+            },
+          },
+        }
+      );
+
+      if (!dbPosts) throw new Error("No results found");
+
+      const totalPages = Math.ceil(totalPosts / Number(process.env.PAGE_LIMIT));
+
+      if (totalPages < Number(req.query.page)) throw new Error("No results found");
+
+      res.status(200).json({
+        isSuccess: true,
+        posts: dbPosts,
+        totalPages,
       });
     } catch (err) {
       console.log("Error on post controller:", err.message);

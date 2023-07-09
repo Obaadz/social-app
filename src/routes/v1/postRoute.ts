@@ -7,6 +7,7 @@ import protectHeaderMW from "../../middlewares/protectHeaderMW.js";
 import getUserPostsValidatorMW from "../../middlewares/getUserPostsValidatorMW.js";
 import getHomePostsValidatorMW from "../../middlewares/getHomePostsValidatorMW.js";
 import likeUnLikeValidatorMW from "../../middlewares/likeUnLikeValidatorMW.js";
+import getPostsByCategoryValidatorMW from "../../middlewares/getPostsByCategoryValidatorMW.js";
 
 const postRoutes = express.Router();
 
@@ -30,6 +31,12 @@ postRoutes.get(
   protectHeaderMW,
   getHomePostsValidatorMW,
   PostController.getHome
+);
+postRoutes.get(
+  "/posts/:category",
+  protectHeaderMW,
+  getPostsByCategoryValidatorMW,
+  PostController.getPostsByCategory
 );
 
 postRoutes.put(

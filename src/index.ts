@@ -16,13 +16,6 @@ const app = express();
 
 if (process.env.NODE_ENV === "development") app.use(morgan("dev"));
 
-app.use(
-  cors({
-    origin: "*",
-    credentials: true,
-  })
-);
-
 app.use("/images", express.static("public/images"));
 
 app.use(express.urlencoded({ extended: true }));

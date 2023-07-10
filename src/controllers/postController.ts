@@ -47,11 +47,32 @@ export default class PostController {
         {
           populate: {
             path: "posts",
-            select: req.query.imageOnly ? "image" : ``,
+            select:
+              req.query.imageOnly === "1"
+                ? "image"
+                : {
+                    image: 1,
+                    author: 1,
+                    caption: 1,
+                    isLiked: { $in: [req.body.dbUser._id, "$likes"] },
+                    likesCount: { $size: "$likes" },
+                    createdAt: 1,
+                  },
             options: {
               limit: Number(process.env.PAGE_LIMIT),
               skip: Number(process.env.PAGE_LIMIT) * (Number(req.query.page) - 1),
               sort: { createdAt: -1 },
+              populate:
+                req.query.imageOnly === "1"
+                  ? ""
+                  : {
+                      path: "author",
+                      select: {
+                        fullName: 1,
+                        image: 1,
+                        isFollowing: { $in: [req.body.dbUser._id, "$followers"] },
+                      },
+                    },
             },
           },
         }
@@ -59,9 +80,10 @@ export default class PostController {
 
       if (!dbUser?.posts) throw new Error("No results found");
 
-      const posts = req.query.imageOnly
-        ? dbUser.toJSON({ virtuals: false }).posts
-        : dbUser.posts;
+      const posts =
+        req.query.imageOnly === "1"
+          ? dbUser.toJSON({ virtuals: false }).posts
+          : dbUser.posts;
 
       const totalPages = Math.ceil(
         dbUser.toJSON<FlattenMaps<{ totalPosts: number }>>().totalPosts /

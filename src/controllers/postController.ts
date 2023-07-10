@@ -215,7 +215,7 @@ export default class PostController {
     try {
       const totalPosts = await PostModel.countDocuments({
         author: {
-          $nin: req.body.dbUser._id,
+          $ne: req.body.dbUser._id,
         },
         category: req.params.category,
       });
@@ -223,7 +223,7 @@ export default class PostController {
       const dbPosts = await PostModel.find(
         {
           author: {
-            $nin: req.body.dbUser.following,
+            $ne: req.body.dbUser._id,
           },
           category: req.params.category,
         },

@@ -183,6 +183,9 @@ export default class UserController {
             else: { $in: [req.body.dbUser._id, "$followers"] },
           },
         },
+        isMyAccount: {
+          $eq: [req.params.userId, req.body.dbUser._id.toJSON()],
+        },
       });
 
       if (!dbUser) throw new Error("User not found");
@@ -266,6 +269,7 @@ export default class UserController {
                 image: 1,
                 followersCount: { $size: "$followers" },
                 isFollowing: { $in: [req.body.dbUser._id, "$followers"] },
+                isMyAccount: { $eq: [req.body.dbUser._id, "$_id"] },
               },
             },
           },
@@ -317,6 +321,7 @@ export default class UserController {
                 image: 1,
                 followersCount: { $size: "$followers" },
                 isFollowing: { $in: [req.body.dbUser._id, "$followers"] },
+                isMyAccount: { $eq: [req.body.dbUser._id, "$_id"] },
               },
             },
           },

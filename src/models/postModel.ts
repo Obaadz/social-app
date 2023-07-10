@@ -84,6 +84,8 @@ const postSchema: Schema<IPost> = new mongoose.Schema(
 );
 
 postSchema.virtual("createdFrom").get(function (this: IPost) {
+  if (!this.createdAt) return;
+  
   const currentTime = moment();
   const pastTime = moment(this.createdAt);
 

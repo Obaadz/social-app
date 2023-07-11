@@ -1,6 +1,7 @@
 import mongoose, { Document, Model, Schema, Types } from "mongoose";
 import { IUser } from "./userModel.js";
 import { IPost } from "./postModel.js";
+import moment from "moment";
 
 export interface IComment extends Document {
   content: string;
@@ -28,10 +29,6 @@ const commentSchema: Schema<IComment> = new mongoose.Schema(
       ref: "Post",
       required: [true, "Post is required!"],
     },
-    createdAt: {
-      type: Date,
-      default: Date.now,
-    },
     __v: {
       type: Number,
       select: false,
@@ -40,8 +37,23 @@ const commentSchema: Schema<IComment> = new mongoose.Schema(
   {
     id: false,
     timestamps: { createdAt: true, updatedAt: false },
+    toJSON: {
+      virtuals: true,
+      transform(doc, ret) {
+        delete ret.createdAt;
+      },
+    },
   }
 );
+
+commentSchema.virtual("createdFrom").get(function (this: IPost) {
+  if (!this.createdAt) return;
+
+  const currentTime = moment();
+  const pastTime = moment(this.createdAt);
+
+  return pastTime.from(currentTime);
+});
 
 const CommentModel: ICommentModel = mongoose.model<IComment, ICommentModel>(
   "Comment",
